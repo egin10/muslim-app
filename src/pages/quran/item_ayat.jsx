@@ -1,34 +1,28 @@
-export const ItemAyat = () => {
+/* eslint-disable react/prop-types */
+export const ItemAyat = (props) => {
+  const { ayah } = props;
+
+  const setBookMark = (ayah) => {
+    console.log(ayah);
+  };
+
   return (
-    <div className="border-b border-b-gray-300 p-2 hover:bg-primary hover:text-white">
+    <div className="border-b border-b-gray-300 p-2 hover:bg-gray-100 relative">
       {/* Arabic */}
-      <div className="w-full flex text-right text-black mb-5">
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fugiat
-        deleniti a, est pariatur tempore tenetur voluptatem, ad harum possimus
-        libero deserunt sint officia eos? Cumque, amet repudiandae! Aperiam,
-        obcaecati ipsam. Amet similique optio autem provident quia, ratione
-        voluptates odit eveniet repellat. Enim voluptate ex quae nam nemo rerum,
-        cupiditate vitae natus laudantium consequuntur eum fugiat consectetur
-        molestiae laboriosam ea. Aperiam. Dolorum nulla totam at quae, possimus
+      <div className="w-full flex text-right justify-between text-black text-4xl leading-loose">
+        <span className="text-xl flex gap-1 items-center w-10">
+          <img src="marker.png" alt="marker" className="h-8 w-8" />
+          {ayah.numberInSurah}
+        </span>
+        <span className="ml-5">{ayah.text}</span>
       </div>
 
-      {/* Latin */}
-      <div className="w-full flex">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facilis,
-        reiciendis necessitatibus? Facilis magni voluptates, autem mollitia quo
-        fugiat pariatur hic ipsam vel qui laudantium itaque dolorem dolores
-        veniam commodi consequuntur. Rem qui expedita vel debitis dignissimos
-        reprehenderit? Nihil ab nesciunt sunt voluptatum, quos ex
-      </div>
-
-      {/* Meaning */}
-      <div className="w-full flex pl-6 text-black">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facilis,
-        reiciendis necessitatibus? Facilis magni voluptates, autem mollitia quo
-        fugiat pariatur hic ipsam vel qui laudantium itaque dolorem dolores
-        veniam commodi consequuntur. Rem qui expedita vel debitis dignissimos
-        reprehenderit? Nihil ab nesciunt sunt voluptatum, quos ex
-      </div>
+      <img
+        src="bookmark.png"
+        alt="bookmark"
+        className="h-6 w-6 absolute right-0 bottom-[-15px] bg-white cursor-pointer"
+        onClick={() => setBookMark(ayah)}
+      />
     </div>
   );
 };
