@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ItemAyat } from "./item_ayat";
 import axios from "axios";
+import { replaceToArabicNumerals } from "../../utils";
 
 const getDataAyah = async (numberSurah, setDataAyah) => {
   try {
@@ -20,6 +21,11 @@ export const MainContent = ({ dataSurah }) => {
 
   const [loading, setLoading] = useState(true);
 
+  // Audio Player
+  const [currentTrack, setCurrentTrack] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef(new Audio());
+
   const selectSurah = (surah) => {
     setSelectedSurah(surah);
     setLoading(true);
@@ -29,6 +35,57 @@ export const MainContent = ({ dataSurah }) => {
       setDataAyah(value.data);
       setLoading(false);
     });
+  };
+
+  useEffect(() => {
+    if (Object.keys(dataAyah).length > 0 && dataAyah.ayahs.length > 0) {
+      audioRef.current.src = dataAyah.ayahs[currentTrack]?.audio;
+
+      if (isPlaying) audioRef.current.play();
+
+      audioRef.current.addEventListener("ended", handleNextTrack);
+
+      return () => {
+        audioRef.current.addEventListener("ended", handleNextTrack);
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTrack, dataAyah]);
+
+  const handleNextTrack = () => {
+    if (currentTrack < dataAyah.ayahs.length - 1) {
+      setCurrentTrack((prev) => prev + 1);
+    } else {
+      setCurrentTrack(0);
+      setIsPlaying(false);
+    }
+  };
+
+  const selectTrack = (index) => {
+    if (
+      Object.keys(dataAyah).length > 0 &&
+      index < dataAyah.ayahs.length - 1 &&
+      index > -1
+    ) {
+      setCurrentTrack(index);
+    }
+  };
+
+  const stopTrack = () => {
+    audioRef.current.pause();
+    audioRef.current.currentTime = 0;
+    setCurrentTrack(0);
+    setIsPlaying(false);
+  };
+
+  const pauseTrack = () => {
+    audioRef.current.pause();
+    setIsPlaying(false);
+  };
+
+  const playTrack = () => {
+    audioRef.current.play();
+    setIsPlaying(true);
   };
 
   return (
@@ -75,12 +132,58 @@ export const MainContent = ({ dataSurah }) => {
           </div>
 
           <div className="flex flex-col items-end text-xl justify-between">
-            <img
-              src="play-button.png"
-              alt="play-button"
-              className="h-5 w-5 cursor-pointer"
-            />
-            {selectedSurah.numberOfAyahs} Ayah, {selectedSurah.revelationType}
+            <div className="flex gap-1">
+              {/* Button Prev */}
+              <button
+                type="button"
+                className="rounded-full p-1 bg-gray-200"
+                onClick={() => selectTrack(currentTrack - 1)}
+              >
+                <img
+                  src="next.png"
+                  alt="prev-button"
+                  className="h-5 w-5 cursor-pointer rotate-180"
+                />
+              </button>
+              {/* Button Play or Pause */}
+              <button
+                type="button"
+                className="rounded-full p-1 bg-gray-200"
+                onClick={() => (isPlaying ? pauseTrack() : playTrack())}
+              >
+                <img
+                  src={isPlaying ? "pause.png" : "play-button.png"}
+                  alt={isPlaying ? "pause" : "play-button"}
+                  className="h-5 w-5 cursor-pointer"
+                />
+              </button>
+              {/* Button Stop */}
+              <button
+                type="button"
+                className="rounded-full p-1 bg-gray-200"
+                onClick={stopTrack}
+              >
+                <img
+                  src="stop.png"
+                  alt="stop-button"
+                  className="h-5 w-5 cursor-pointer"
+                />
+              </button>
+              {/* Button Next */}
+              <button
+                type="button"
+                className="rounded-full p-1 bg-gray-200"
+                onClick={() => selectTrack(currentTrack + 1)}
+              >
+                <img
+                  src="next.png"
+                  alt="next-button"
+                  className="h-5 w-5 cursor-pointer"
+                />
+              </button>
+            </div>
+            {replaceToArabicNumerals(`${selectedSurah.numberOfAyahs}`)} Ayah,{" "}
+            {selectedSurah.revelationType}
           </div>
         </div>
       ) : (
@@ -99,7 +202,14 @@ export const MainContent = ({ dataSurah }) => {
           {dataAyah &&
             Object.values(dataAyah).length > 0 &&
             dataAyah.ayahs.map((ayah, index) => (
-              <ItemAyat key={index} ayah={ayah} />
+              <div
+                key={index}
+                className={
+                  isPlaying && currentTrack === index ? "bg-gray-200" : ""
+                }
+              >
+                <ItemAyat ayah={ayah} />
+              </div>
             ))}
         </div>
       )}

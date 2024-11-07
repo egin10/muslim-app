@@ -1,3 +1,5 @@
+import { replaceToArabicNumerals } from "../../utils";
+
 /* eslint-disable react/prop-types */
 export const ItemAyat = (props) => {
   const { ayah } = props;
@@ -12,7 +14,7 @@ export const ItemAyat = (props) => {
       <div className="w-full flex text-right justify-between text-black text-4xl leading-loose">
         <span className="text-xl flex gap-1 items-center w-10">
           <img src="marker.png" alt="marker" className="h-8 w-8" />
-          {ayah.numberInSurah}
+          {replaceToArabicNumerals(`${ayah.numberInSurah}`)}
         </span>
         <span className="ml-5">{ayah.text}</span>
       </div>
