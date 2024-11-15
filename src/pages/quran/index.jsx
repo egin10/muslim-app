@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { MainContent } from "./main_content";
-import { SideBar } from "./sidebar";
 import axios from "axios";
+import { Content } from "./content";
+import { MainContent } from "../../components/main_content";
 
 const getDataSurah = async (setDataSurah) => {
   try {
@@ -13,30 +13,29 @@ const getDataSurah = async (setDataSurah) => {
 };
 
 export const QuranPage = () => {
+  // DATA SURAH
   const [dataSurah, setDataSurah] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingSurah, setLoadingSurah] = useState(true);
 
+  // GET DATA SURAH
   useEffect(() => {
     getDataSurah((value) => {
       setDataSurah(value.data);
 
-      setLoading(false);
+      setLoadingSurah(false);
     });
   }, []);
 
   return (
-    <div className="h-screen w-screen flex overflow-hidden">
-      {/* SideBar */}
-      <SideBar />
-
+    <MainContent>
       {/* Main Content */}
-      {loading ? (
+      {loadingSurah ? (
         <div className="w-[85vw] h-full flex items-center justify-center text-md text-primary">
           Get data surah...
         </div>
       ) : (
-        <MainContent dataSurah={dataSurah} />
+        <Content dataSurah={dataSurah} />
       )}
-    </div>
+    </MainContent>
   );
 };

@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
-import { ItemAyat } from "./item_ayat";
 import axios from "axios";
 import { replaceToArabicNumerals } from "../../utils";
+import { ItemAyat } from "../../components/item_ayat";
 
 const getDataAyah = async (numberSurah, setDataAyah) => {
   try {
@@ -15,7 +16,8 @@ const getDataAyah = async (numberSurah, setDataAyah) => {
   }
 };
 
-export const MainContent = ({ dataSurah }) => {
+export const Content = ({ dataSurah }) => {
+  // DATA AYAH
   const [selectedSurah, setSelectedSurah] = useState({});
   const [dataAyah, setDataAyah] = useState({});
 
@@ -26,6 +28,7 @@ export const MainContent = ({ dataSurah }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(new Audio());
 
+  // GET DATA AYAH BY SELECTED SURAH
   const selectSurah = (surah) => {
     setSelectedSurah(surah);
     setLoading(true);
@@ -37,6 +40,7 @@ export const MainContent = ({ dataSurah }) => {
     });
   };
 
+  // PLAY SELECTED SURAH
   useEffect(() => {
     if (Object.keys(dataAyah).length > 0 && dataAyah.ayahs.length > 0) {
       audioRef.current.src = dataAyah.ayahs[currentTrack]?.audio;
@@ -49,7 +53,6 @@ export const MainContent = ({ dataSurah }) => {
         audioRef.current.addEventListener("ended", handleNextTrack);
       };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTrack, dataAyah]);
 
   const handleNextTrack = () => {
@@ -89,7 +92,7 @@ export const MainContent = ({ dataSurah }) => {
   };
 
   return (
-    <div className="flex flex-col w-[85vw] h-full p-4 text-primary">
+    <div className="flex flex-col h-full text-primary">
       {/* Search Box */}
       <div className="w-full flex rounded-md relative items-center">
         <input
